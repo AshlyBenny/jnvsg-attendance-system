@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JNVSG House Attendance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #eef2f3, #dfe9f3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Arial;
+        }
+
+        .glass {
+            background: white;
+            padding: 26px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 330px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            text-align: left;
+            animation: fadeUp 0.6s ease;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .top-text {
+            display: inline-block;
+            background: linear-gradient(135deg, #065f46, #047857);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 10px rgba(6,95,70,0.3);
+        }
+
+        h2 {
+            font-size: 21px;
+            margin-bottom: 20px;
+            color: #7a0c0c;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 13px;
+            margin-top: 12px;
+            border-radius: 14px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: all 0.25s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #043124;
+            box-shadow: 0 0 0 3px rgba(6,95,70,0.1);
+            outline: none;
+        }
+
+        #code {
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 13px;
+            border-radius: 16px;
+            border: none;
+            background: linear-gradient(135deg, #065f46, #047857);
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 15px rgba(6,95,70,0.25);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(6,95,70,0.3);
+        }
+
+        button:active {
+            transform: scale(0.96);
+        }
+
+        @media (max-width: 400px) {
+            .glass { padding: 22px; }
+            h2 { font-size: 18px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="glass">
+
+    <div class="top-text">Bentech Presents...</div>
+
+    <h2>JNVSG House Attendance</h2>
+
+    <select id="house">
+        <option value="">Select House</option>
+        <option>Himagiri 1</option>
+        <option>Himagiri 2</option>
+        <option>Aravali Boys</option>
+        <option>Aravali Girls</option>
+        <option>Nilgiri Boys</option>
+        <option>Nilgiri Girls</option>
+        <option>Shivalik Boys</option>
+        <option>Shivalik Girls</option>
+        <option>Udaigiri Boys</option>
+        <option>Udaigiri Girls</option>
+    </select>
+
+    <input type="password" id="code" placeholder="Enter Code" maxlength="3">
+
+    <button onclick="login()">Verify</button>
+
+</div>
+
+<script>
+
+const houseCodes = {
+    "Himagiri 1":    "123",
+    "Himagiri 2":    "234",
+    "Aravali Boys":  "345",
+    "Aravali Girls": "456",
+    "Nilgiri Boys":  "567",
+    "Nilgiri Girls": "678",
+    "Shivalik Boys": "789",
+    "Shivalik Girls":"890",
+    "Udaigiri Boys": "901",
+    "Udaigiri Girls":"012"
+};
+
+function highlight(id) {
+    let el = document.getElementById(id);
+    el.style.border = "2px solid red";
+    setTimeout(() => { el.style.border = "1px solid #ddd"; }, 1500);
+}
+
+function login() {
+    const house = document.getElementById("house").value;
+    const code  = document.getElementById("code").value;
+
+    if (!house) { highlight("house"); return; }
+    if (code.length !== 3) { highlight("code"); return; }
+
+    if (houseCodes[house] === code) {
+        // ✅ FIXED: uses /form instead of form.html
+        window.location.href = "/form?house=" + encodeURIComponent(house);
+    } else {
+        alert("Wrong code ❌");
+    }
+}
+
+document.getElementById("code").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") login();
+});
+
+</script>
+</body>
+</html>

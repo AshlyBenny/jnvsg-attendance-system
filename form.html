@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f3d5d5, #e2ece9);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            font-family: Arial;
+            padding: 20px 0;
+        }
+
+        .glass {
+            background: rgba(255,255,255,0.3);
+            backdrop-filter: blur(15px);
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 320px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 8px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 7px;
+            margin-top: 4px;
+            border-radius: 6px;
+            border: none;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 12px;
+            padding: 8px;
+            border-radius: 8px;
+            border: none;
+            background: #333;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        #msg {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="glass">
+
+    <h2>Attendance Form</h2>
+
+    <p><b>House:</b> <span id="house"></span></p>
+
+    <label>Date:</label>
+    <input type="date" id="date">
+
+    <label>Total Strength:</label>
+    <input type="number" id="total" min="0">
+
+    <label>No. of Present:</label>
+    <input type="number" id="present" min="0">
+
+    <label>No. of Leave:</label>
+    <input type="number" id="leave" min="0">
+    <div id="leaveExtra"></div>
+
+    <label>No. of On-duty:</label>
+    <input type="number" id="onduty" min="0">
+    <div id="ondutyExtra"></div>
+
+    <label>No. of Sick:</label>
+    <input type="number" id="sick" min="0">
+    <div id="sickExtra"></div>
+
+    <label>Submitted by:</label>
+    <input type="text" id="submittedBy">
+
+    <button id="submitBtn" onclick="submitData()">Submit</button>
+
+    <div class="loader" id="loader">Submitting...</div>
+
+    <p id="msg"></p>
+
+</div>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+document.getElementById("house").innerText = params.get("house");
+
+function getLocalDate() {
+    const today = new Date();
+    const local = new Date(today.getTime() - today.getTimezoneOffset() * 60000);
+    return local.toISOString().split("T")[0];
+}
+
+document.getElementById("date").value = getLocalDate();
+
+["total","present","leave","onduty","sick"].forEach(id => {
+    document.getElementById(id).addEventListener("input", function() {
+        if (this.value < 0) this.value = 0;
+    });
+});
+
+function updateExtra() {
+    let leave  = document.getElementById("leave").value;
+    let onduty = document.getElementById("onduty").value;
+    let sick   = document.getElementById("sick").value;
+
+    let leaveVal  = document.getElementById("leaveNames")?.value  || "";
+    let ondutyVal = document.getElementById("ondutyNames")?.value || "";
+    let sickVal   = document.getElementById("sickNames")?.value   || "";
+
+    document.getElementById("leaveExtra").innerHTML =
+        leave > 0 ? `<label>Leave Names:</label><input id="leaveNames" value="${leaveVal}">` : "";
+
+    document.getElementById("ondutyExtra").innerHTML =
+        onduty > 0 ? `<label>On-duty Names:</label><input id="ondutyNames" value="${ondutyVal}">` : "";
+
+    document.getElementById("sickExtra").innerHTML =
+        sick > 0 ? `<label>Sick Names:</label><input id="sickNames" value="${sickVal}">` : "";
+}
+
+["leave","onduty","sick"].forEach(id => {
+    document.getElementById(id).addEventListener("input", updateExtra);
+});
+
+function highlightError(id) {
+    let el = document.getElementById(id);
+    el.style.border = "2px solid red";
+    el.focus();
+    setTimeout(() => { el.style.border = "none"; }, 2000);
+}
+
+const order = [
+    "date","total","present","leave",
+    "leaveNames","onduty","ondutyNames",
+    "sick","sickNames","submittedBy"
+];
+
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        let current = document.activeElement.id;
+        updateExtra();
+        let index = order.indexOf(current);
+        for (let i = index + 1; i < order.length; i++) {
+            let next = document.getElementById(order[i]);
+            if (next) { next.focus(); break; }
+        }
+    }
+});
+
+function submitData() {
+
+    const data = {
+        date:        document.getElementById("date").value,
+        house:       params.get("house"),
+        total:       document.getElementById("total").value,
+        present:     document.getElementById("present").value,
+        leave:       document.getElementById("leave").value,
+        onduty:      document.getElementById("onduty").value,
+        sick:        document.getElementById("sick").value,
+        leaveNames:  document.getElementById("leaveNames")?.value  || "",
+        ondutyNames: document.getElementById("ondutyNames")?.value || "",
+        sickNames:   document.getElementById("sickNames")?.value   || "",
+        submittedBy: document.getElementById("submittedBy").value
+    };
+
+    if (!data.date)        return highlightError("date");
+    if (!data.total)       return highlightError("total");
+    if (!data.present)     return highlightError("present");
+    if (data.leave === "") return highlightError("leave");
+    if (data.onduty === "") return highlightError("onduty");
+    if (data.sick === "")  return highlightError("sick");
+    if (!data.submittedBy) return highlightError("submittedBy");
+
+    const formattedDate = new Date(data.date).toLocaleDateString("en-GB");
+
+    const confirmMsg =
+`Please verify before submitting:
+
+Date: ${formattedDate}
+House: ${data.house}
+
+Total Strength: ${data.total}
+Present: ${data.present}
+Leave: ${data.leave}
+On-duty: ${data.onduty}
+Sick: ${data.sick}
+
+Submitted by: ${data.submittedBy}`;
+
+    if (!confirm(confirmMsg)) return;
+
+    const btn    = document.getElementById("submitBtn");
+    const loader = document.getElementById("loader");
+
+    btn.disabled = true;
+    loader.style.display = "block";
+
+    // ✅ FIXED: no more hardcoded IP address
+    fetch("/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(res => {
+        document.getElementById("msg").innerText = res.msg;
+
+        document.querySelectorAll("input").forEach(i => i.value = "");
+        document.getElementById("leaveExtra").innerHTML  = "";
+        document.getElementById("ondutyExtra").innerHTML = "";
+        document.getElementById("sickExtra").innerHTML   = "";
+        document.getElementById("date").value = getLocalDate();
+
+        btn.disabled = false;
+        loader.style.display = "none";
+    })
+    .catch(() => {
+        document.getElementById("msg").innerText = "Server Error ❌";
+        btn.disabled = false;
+        loader.style.display = "none";
+    });
+}
+
+</script>
+</body>
+</html>
