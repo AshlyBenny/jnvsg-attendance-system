@@ -1,71 +1,79 @@
-#  School Attendance Management System
+# JNV Attendance Management System
 
-A web-based Attendance Management System designed for managing **house-wise attendance** in a school environment.  
-This system allows teachers to submit daily attendance records efficiently, with all data being stored and organized automatically in Google Sheets.
+A simple attendance tracking website built for JNV South Goa — a residential central government school.
 
-##  Live Application
-🔗 https://jnvsgattendance.pythonanywhere.com
+**Live:** https://jnvsgattendance.pythonanywhere.com  
+*Developed under BenTech*
 
-##  Project Description
+---
 
-This project was developed to simulate a real-world school scenario where students are divided into different houses (e.g., Red, Blue, Green, Yellow).  
+## Why I built this
 
-Teachers are responsible for submitting attendance details for their respective houses. The system simplifies this process by providing a centralized web interface where attendance can be recorded and stored in real-time.
+JNV is a residential school, so students stay on campus all year. Teachers have to take attendance multiple times a day — morning, evening, whenever needed — and it's done house-wise (Red, Blue, Green, Yellow).
 
-##  Key Features
+The school administration wanted a quick digital way to handle this. So I built a simple website where teachers can open it on their phone or computer, fill in the attendance, and submit. All the data goes straight into a Google Sheet, so it can be checked from anywhere without needing to be physically present.
 
--  Simple and clean attendance submission form  
--  House-wise attendance tracking system  
--  Automatic date and time recording  
--  Direct integration with Google Sheets  
--  Real-time data storage and access  
--  Fully deployed and accessible online  
+It's not the school's official system — teachers still maintain physical registers too. But this website is currently being used at JNV South Goa alongside those registers.
 
-##  Technologies Used
+Since all JNV schools across India follow the same house system, this can work for any JNV with barely any changes.
 
-- **Frontend:** HTML  
-- **Backend:** Flask (Python)  
-- **Database:** Google Sheets (via API)  
-- **Deployment:** PythonAnywhere  
+---
 
-##  System Workflow
+## What it does
 
-1. Teacher opens the attendance website  
-2. Selects/enters house and attendance details  
-3. Submits the form  
-4. Flask backend processes the request  
-5. Current date and time are added automatically  
-6. Data is stored in the connected Google Sheet  
+- Teachers fill a form with house and attendance details
+- Date and time get recorded automatically on every submission
+- Data is saved to Google Sheets and can be viewed from anywhere
+- Works on mobile — no app to install, just open the link
 
-##  Project Structure
-app.py #Backend logic(Flask)
-form.html #Attendance input form
-index.html #Landing page 
-requirements.txt #Required dependencies
+---
 
-## Data Management
+## Built with
 
-- Attendance data is securely stored in Google Sheets  
-- Each entry is recorded with timestamp and house details  
-- The system ensures organized and structured data collection  
+- HTML (frontend)
+- Flask / Python (backend)
+- Google Sheets API (to store data)
+- PythonAnywhere (deployment)
 
-##  Future Improvements
+---
 
-- Role-based login system for teachers  
-- Admin dashboard for monitoring attendance  
-- Data analytics and visualization  
-- Exportable attendance reports  
+## How it works
 
-##  Author
+Teacher opens website → fills form → submits → Flask saves the entry to Google Sheets with a timestamp → admin can view it anytime from anywhere.
 
-**Ashly Benny**
+---
 
-##  Project Objective
+## Project files
 
-This project demonstrates the practical implementation of:
-- Web development using Flask  
-- API integration (Google Sheets)  
-- Real-time data handling  
-- Deployment of a live web application  
+```
+├── app.py            # backend logic and Google Sheets connection
+├── form.html         # the attendance form teachers fill
+├── index.html        # home page
+├── requirements.txt  # dependencies
+```
 
- This system is designed as a real-world solution for efficient attendance management in schools.
+---
+
+## Running it locally
+
+```bash
+git clone https://github.com/AshlyBenny/jnvsg-attendance-system.git
+cd jnvsg-attendance-system
+pip install -r requirements.txt
+python app.py
+```
+
+You'll need a Google Sheets API credentials file — set that up from Google Cloud Console and share your sheet with the service account email.
+
+---
+
+## What I'd add later
+
+- A login system so each house teacher has their own access
+- An admin view to see all houses at once
+- Ability to export records as PDF or Excel
+- Support for any JNV school to set it up for themselves
+
+---
+
+*Built by Ashly Benny · BenTech · For JNV South Goa*
