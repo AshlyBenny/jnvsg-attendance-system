@@ -1,7 +1,7 @@
 # JNV Attendance Management System
 
 A simple attendance tracking website built for JNV South Goa — a residential central government school.
-Previously deployed on PythonAnywhere for trial usage and live testing.
+Previously deployed on PythonAnywhere for trial use and live testing.
 
 ---
 
